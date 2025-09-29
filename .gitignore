@@ -1,0 +1,8 @@
+~*.docx
+.venv/*
+*/__pycache__/*
+__pycache__/*
+.ipython
+
+*.pyc
+.ipynb_checkpoints/*
