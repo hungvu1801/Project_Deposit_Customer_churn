@@ -3,7 +3,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import cm
 import seaborn as sns
 # Library for data mining
 from imblearn.over_sampling import SMOTE
@@ -15,19 +14,22 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report, confusion_matrix, recall_score, f1_score
 from xgboost import XGBClassifier
 # Library for metrics
-from sklearn.metrics import classification_report, confusion_matrix, recall_score, f1_score, roc_curve
 
-import re
+
 import time
 import gc
 from PIL import Image
+from typing import Tuple, Any
 
 import warnings
 warnings.filterwarnings("ignore")
 
-def make_log_column(df, vals, prefix=False):
+
+from Demo.assets.assets import CAT_VAL, CON_VAL, algorithms_dict
+def make_log_column(df: pd.DataFrame, vals: list, prefix: bool = False) -> Tuple[pd.DataFrame, Any]:
     scaler = 'none'
     for val in vals:
         if prefix == True:
@@ -40,7 +42,7 @@ def make_log_column(df, vals, prefix=False):
     return df, scaler
 
 
-def make_RobustScaler_column(df, vals, prefix=False):
+def make_RobustScaler_column(df: pd.DataFrame, vals: list, prefix: bool = False)-> Tuple[pd.DataFrame, Any]:
     scaler = RobustScaler()
     robust_scaler = scaler.fit_transform(df[vals])
     if prefix == True:
@@ -52,7 +54,7 @@ def make_RobustScaler_column(df, vals, prefix=False):
         df.loc[:, val] = tmp[val].values
     return df, scaler
 
-def make_StandardScaler_column(df, vals, prefix=False):
+def make_StandardScaler_column(df: pd.DataFrame, vals: list, prefix=False):
     scaler = StandardScaler()
     standard_scaler = scaler.fit_transform(df[vals])
     if prefix == True:
@@ -66,16 +68,8 @@ def make_StandardScaler_column(df, vals, prefix=False):
 
 
 
-def model(df, algorithm, scaling='None', imb_handling='None'):
-    CAT_VAL = ['0_MaGD', '11_MaGD', '15_MaGD', '1_MaGD', 
-            '2_MaGD', '3_MaGD', '4_MaGD', '6_MaGD', 
-            '7_MaGD', '8_MaGD', '00_PGD', '02_PGD', 
-            '03_PGD', '05_PGD', '06_PGD', '07_PGD', 
-            '08_PGD', 'DA_NghiepVuChiTiet', 
-            'SA_NghiepVuChiTiet', 'GIOITINH', 'Account_Management']
+def model(df: pd.DataFrame, algorithm: str, scaling: str ='None', imb_handling='None'):
 
-    CON_VAL = ['avg_VND', 'min_VND', 'max_VND', 'avg_interest']
-    
     scaler = 'none'
     if scaling == 'Logarithm':
         df, scaler = make_log_column(df, CON_VAL, prefix=True)
@@ -120,26 +114,15 @@ def model(df, algorithm, scaling='None', imb_handling='None'):
     
     X_train, X_test = X_train[inputs], X_test[inputs]
     
-    algorithms_dict = {'Logistics Regression': LogisticRegression(), 
-                       'Decision Tree': DecisionTreeClassifier(), 
-                       'Random Forest': RandomForestClassifier(n_estimators=500, n_jobs=-1), 
-                       'XGBoost': XGBClassifier(n_jobs=-1)}
 
-    model_ = algorithms_dict[algorithm].fit(X_train, y_train)   
+
+    model_ = algorithms_dict[algorithm].fit(X_train, y_train)
     gc.enable()
     del df, y_train, X_test, y_test
     gc.collect()
     return model_, scaler, X_train.columns
 
-def evaluate_model(df, algorithm, scaling='None', imb_handling='None'):
-    CAT_VAL = ['0_MaGD', '11_MaGD', '15_MaGD', '1_MaGD', 
-            '2_MaGD', '3_MaGD', '4_MaGD', '6_MaGD', 
-            '7_MaGD', '8_MaGD', '00_PGD', '02_PGD', 
-            '03_PGD', '05_PGD', '06_PGD', '07_PGD', 
-            '08_PGD', 'DA_NghiepVuChiTiet', 
-            'SA_NghiepVuChiTiet', 'GIOITINH', 'Account_Management']
-
-    CON_VAL = ['avg_VND', 'min_VND', 'max_VND', 'avg_interest']
+def evaluate_model(df: pd.DataFrame, algorithm: str, scaling: str = 'None', imb_handling: str ='None'):
     # Conditions for scaler
     if scaling == 'Logarithm':
         df, scaler = make_log_column(df, CON_VAL, prefix=True)
@@ -182,11 +165,6 @@ def evaluate_model(df, algorithm, scaling='None', imb_handling='None'):
         X_train, y_train = SMOTE().fit_resample(X_train, y_train)       
     
     X_train, X_test = X_train[inputs], X_test[inputs]
-    # 
-    algorithms_dict = {'Logistics Regression': LogisticRegression(), 
-                       'Decision Tree': DecisionTreeClassifier(), 
-                       'Random Forest': RandomForestClassifier(n_estimators=500, n_jobs=-1), 
-                       'XGBoost': XGBClassifier(n_jobs=-1)}
     
     # Fitting model
     model_ = algorithms_dict[algorithm].fit(X_train, y_train)
@@ -207,10 +185,10 @@ def evaluate_model(df, algorithm, scaling='None', imb_handling='None'):
 
 '------------------------------------------------------------------------------------------------'
 
-st.header('= = = = = = = = = = = = = = = = = = = = = = = = = = = = = =')
+st.header('= = = = = = = = = = = = = = = = = = = = = = = = = = = =')
 st.markdown("<h1 style='text-align: center;'>CUSTOMER CHURN DEMO</h1>", unsafe_allow_html=True)
 st.markdown("<h2 style='text-align: center;'>PREDICTING WHETHER A CUSTOMER IS GOING TO WITHDRAW OR NOT (BETTER NOT!)</h2>", unsafe_allow_html=True)
-st.header('= = = = = = = = = = = = = = = = = = = = = = = = = = = = = =')
+st.header('= = = = = = = = = = = = = = = = = = = = = = = = = = = =')
 image1 = Image.open('Demo/assets/photo-1534951009808-766178b47a4f.jpg')
 st.image(image1, use_column_width=True)
 
