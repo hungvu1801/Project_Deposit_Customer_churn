@@ -1,3 +1,10 @@
-numpy
-pandas
+imbalanced-learn
 jupyter
+numpy
+matplotlib
+pandas
+pillow
+scikit-learn
+seaborn
+streamlit
+xgboost

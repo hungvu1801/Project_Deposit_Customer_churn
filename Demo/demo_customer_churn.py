@@ -211,7 +211,7 @@ st.header('= = = = = = = = = = = = = = = = = = = = = = = = = = = = = =')
 st.markdown("<h1 style='text-align: center;'>CUSTOMER CHURN DEMO</h1>", unsafe_allow_html=True)
 st.markdown("<h2 style='text-align: center;'>PREDICTING WHETHER A CUSTOMER IS GOING TO WITHDRAW OR NOT (BETTER NOT!)</h2>", unsafe_allow_html=True)
 st.header('= = = = = = = = = = = = = = = = = = = = = = = = = = = = = =')
-image1 = Image.open('photo-1534951009808-766178b47a4f.jpg')
+image1 = Image.open('Demo/assets/photo-1534951009808-766178b47a4f.jpg')
 st.image(image1, use_column_width=True)
 
 '-----------------------------------------------------------------------------------------------'
@@ -222,8 +222,8 @@ if page == 'Predict your data':
 
     st.header('Which of the Label method do you want to run on?')
     data_bt = st.radio('Label:', ['Experienced based Labelling', 'Propagating Labelling'])
-    df = pd.read_csv('data_cleaned.csv', index_col='Unnamed: 0')
-    df2 = pd.read_csv('data_cleaned_propag_label.csv', index_col='Unnamed: 0')
+    df = pd.read_csv('Demo/assets/Datas/data_cleaned.csv', index_col='Unnamed: 0')
+    df2 = pd.read_csv('Demo/assets/Datas/data_cleaned_propag_label.csv', index_col='Unnamed: 0')
     if data_bt == 'Experienced based Labelling':
         df = df
     else:
@@ -245,7 +245,7 @@ if page == 'Predict your data':
 
     model_, scaler, cols = model(df=df, scaling=scaler_bt, imb_handling=imh_bt, algorithm=algo_bt)
 
-    X_predict = pd.read_csv('data_test1.csv')
+    X_predict = pd.read_csv('Demo/assets/Datas/data_test1.csv')
     X_predict = X_predict.apply(pd.to_numeric)
 
     if scaler == 'none':
@@ -257,7 +257,7 @@ if page == 'Predict your data':
         X_predict.iloc[:,:4] = scaler.transform(np.array(X_predict.iloc[:,:4]))
 
     X_predict.columns = cols
-    image2 = Image.open('photo-1444653614773-995cb1ef9efa.jpg')
+    image2 = Image.open('Demo/assets/photo-1444653614773-995cb1ef9efa.jpg')
     st.image(image2, use_column_width=True)
     btn = st.button("Predict!")
     if btn:
@@ -269,7 +269,7 @@ if page == 'Predict your data':
     
     btn3 = st.button("Game!")
     if btn3:
-        X_game = pd.read_csv('data_test2.csv')
+        X_game = pd.read_csv('Demo/assets/Datas/data_test2.csv')
         X_game = X_game.apply(pd.to_numeric)
         X_game.columns = cols
         try:    
@@ -293,8 +293,8 @@ else:
     st.header('Which of the Label method do you want to run on?')
     data_bt = st.radio('Label:', ['Experienced based Labelling', 'Propagating Labelling'])
     
-    df = pd.read_csv('data_cleaned.csv', index_col='Unnamed: 0')
-    df2 = pd.read_csv('data_cleaned_propag_label.csv', index_col='Unnamed: 0')
+    df = pd.read_csv('Demo/assets/Datas/data_cleaned.csv', index_col='Unnamed: 0')
+    df2 = pd.read_csv('Demo/assets/Datas/data_cleaned_propag_label.csv', index_col='Unnamed: 0')
     if data_bt == 'Experienced based Labelling':
         df = df
     else:
@@ -321,7 +321,7 @@ else:
     t1 = time.perf_counter()
     f1, recall, score_test, score_train, con, cat, cfs_matrix, class_rep = evaluate_model(df=df, scaling=scaler_bt, imb_handling=imh_bt, algorithm=algo_bt)
     t2 = time.perf_counter()
-    image3 = Image.open('photo-1527474305487-b87b222841cc.jpg')
+    image3 = Image.open('Demo/assets/photo-1527474305487-b87b222841cc.jpg')
     st.image(image3, use_column_width=True)
   
 
